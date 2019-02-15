@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MyStock</string>
+    <string name="add_spare">add</string>
 </resources>
