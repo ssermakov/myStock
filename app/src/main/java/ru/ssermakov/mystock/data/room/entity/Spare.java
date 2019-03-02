@@ -12,9 +12,9 @@ public class Spare {
     private String partNumber;
     private String state;
     private String returnCode;
-    private int quantity;
+    private String quantity;
 
-    public Spare(String name, String partNumber, String state, String returnCode, int quantity) {
+    public Spare(String name, String partNumber, String state, String returnCode, String quantity) {
         this.name = name;
         this.partNumber = partNumber;
         this.state = state;
@@ -62,11 +62,11 @@ public class Spare {
         this.returnCode = returnCode;
     }
 
-    public int getQuantity() {
+    public String getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
 }

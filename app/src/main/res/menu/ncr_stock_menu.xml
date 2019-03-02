@@ -4,7 +4,7 @@
 
 
     <item
-        android:id="@+id/fm_add_person"
+        android:id="@+id/ncr_stock_menu"
         android:icon="@drawable/ic_add_black_24dp"
         android:title="@string/add_spare"
         android:visible="true"
