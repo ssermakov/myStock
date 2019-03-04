@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,27 +22,25 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.apache.commons.compress.archivers.dump.InvalidFormatException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import ru.ssermakov.mystock.R;
 import ru.ssermakov.mystock.controllers.NcrAddSpareController;
 import ru.ssermakov.mystock.data.room.entity.Spare;
+import ru.ssermakov.mystock.views.interfaces.NcrAddSpareInterface;
 
-public class NcrAddSpareActivity extends AppCompatActivity implements View.OnClickListener {
+public class NcrAddSpareActivity extends AppCompatActivity implements View.OnClickListener, NcrAddSpareInterface {
 
     private static final int EXCEL_REQUEST_CODE = 10;
     private static final String TAG = "EXCEL";
@@ -52,6 +49,7 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
     private EditText state, pn, desc, quantity, reworkCode;
     Button addSpareButton, openExcelButton;
     NcrAddSpareController ncrAddSpareController;
+    private HSSFWorkbook workBook;
 
 
     @Override
@@ -110,13 +108,40 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
         }
 
         if (viewId == R.id.openNcrExcelButton) {
-            Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-//            i.setType("application/vnd.ms-excel");
-            i.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivityForResult(i, EXCEL_REQUEST_CODE);
-
+            createIntentForOpenExcel();
         }
+    }
+
+    @Override
+    public void createIntentForOpenExcel() {
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.setType("application/vnd.ms-excel");
+//      i.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivityForResult(i, EXCEL_REQUEST_CODE);
+    }
+
+    @Override
+    public List<Spare> createListOfSparesFromWorkBook(Context context,HSSFWorkbook workBook) {
+        // Get the first sheet from workbook
+        HSSFSheet mySheet = workBook.getSheetAt(0);
+
+        /** We now need something to iterate through the cells.**/
+        Iterator rowIterator = mySheet.rowIterator();
+
+        while (rowIterator.hasNext()) {
+            HSSFRow myRow = (HSSFRow) rowIterator.next();
+            Iterator cellIterator = myRow.cellIterator();
+            while (cellIterator.hasNext()) {
+                HSSFCell myCell = (HSSFCell) cellIterator.next();
+                if (myCell.getCellType() == CellType.NUMERIC) {
+                    myCell.setCellType(CellType.STRING);
+                }
+                Log.d(TAG, "Cell value: " + myCell.toString());
+                Toast.makeText(context, "cell Value: " + myCell.toString(), Toast.LENGTH_SHORT).show();
+            }
+        }
+        return null;
     }
 
     @Override
@@ -125,43 +150,13 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
         if (requestCode == EXCEL_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Uri selectedImage = data.getData();
-                String fileName = getFileName(selectedImage);
                 String filePath = null;
                 filePath = getPath(this, selectedImage);
                 File fileSource = new File(filePath);
-                readExcelFile(this, filePath);
+                workBook = getWorkBookFromExcel(this, filePath);
 
             }
         }
-    }
-
-    private String getFileName(Uri selectedImage) {
-        String fileName = null;
-        if (selectedImage.getScheme().equals("content")) {
-            Cursor cursor = getContentResolver().query(
-                    selectedImage,
-                    null,
-                    null,
-                    null,
-                    null
-            );
-            if (cursor != null && cursor.moveToFirst()) {
-                try {
-                    fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                } finally {
-                    cursor.close();
-                }
-            }
-            if (fileName == null) {
-
-                fileName = selectedImage.getPath();
-                int cut = fileName.lastIndexOf("/");
-                if (cut != -1) {
-                    fileName = fileName.substring(cut + 1);
-                }
-            }
-        }
-        return fileName;
     }
 
     public static String getPath(final Context context, final Uri uri) {
@@ -293,62 +288,28 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
 
     }
 
-    private static void readExcelFile(Context context, String filename) {
+    private static HSSFWorkbook getWorkBookFromExcel(Context context, String filename) {
 
-//        if (!isExternalStorageAvailable() || isExternalStorageReadOnly())
-//        {
-//            Log.e(TAG, "Storage not available or read only");
-//            return;
-//        }
-
-        try {
-            // Creating Input Stream
-            File file = new File(filename);
-//            FileInputStream myInput = new FileInputStream(file);
-
-            // Create a POIFSFileSystem object
-//            POIFSFileSystem myFileSystem = new POIFSFileSystem(myInput);
-
-            // Create a workbook using the File System
-//            HSSFWorkbook myWorkBook = new HSSFWorkbook(myFileSystem);
-
-
+        if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
+            Log.e(TAG, "Storage not available or read only");
+        } else {
             try {
-                OPCPackage pkg = OPCPackage.open(file);
-                myWorkBook = new XSSFWorkbook(pkg);
-                pkg.close();
-            } catch (InvalidFormatException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+                // Creating Input Stream
+                File file = new File(filename);
+                FileInputStream inputStream = new FileInputStream(file);
+
+                // Create a POIFSFileSystem object
+                POIFSFileSystem fileSystem = new POIFSFileSystem(inputStream);
+
+                // Create a workbook using the File System
+                return new HSSFWorkbook(fileSystem);
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
-
-
-
-            // Get the first sheet from workbook
-            XSSFSheet mySheet = myWorkBook.getSheetAt(0);
-
-            /** We now need something to iterate through the cells.**/
-            Iterator rowIter = mySheet.rowIterator();
-
-            while (rowIter.hasNext()) {
-                HSSFRow myRow = (HSSFRow) rowIter.next();
-                Iterator cellIter = myRow.cellIterator();
-                while (cellIter.hasNext()) {
-                    HSSFCell myCell = (HSSFCell) cellIter.next();
-                    if (myCell.getCellType() == CellType.NUMERIC) {
-                        myCell.setCellType(CellType.STRING);
-                    }
-                    Log.d(TAG, "Cell value: " + myCell.toString());
-                    Toast.makeText(context, "cell Value: " + myCell.toString(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
-        return;
+        return null;
     }
 
     public static boolean isExternalStorageReadOnly() {
