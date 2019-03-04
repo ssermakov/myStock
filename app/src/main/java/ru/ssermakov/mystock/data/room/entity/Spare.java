@@ -6,7 +6,7 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity(tableName = "spares")
 public class Spare {
 
-    @PrimaryKey (autoGenerate = true)
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
     private String partNumber;
@@ -14,6 +14,9 @@ public class Spare {
     private String returnCode;
     private String quantity;
     private String location;
+
+    public Spare() {
+    }
 
     public Spare(String name, String partNumber, String state, String returnCode, String quantity, String location) {
         this.name = name;

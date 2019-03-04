@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.apache.commons.math3.geometry.partitioning.BSPTreeVisitor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -32,8 +34,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import ru.ssermakov.mystock.R;
 import ru.ssermakov.mystock.controllers.NcrAddSpareController;
@@ -50,6 +53,7 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
     Button addSpareButton, openExcelButton;
     NcrAddSpareController ncrAddSpareController;
     private HSSFWorkbook workBook;
+    private ArrayList<Spare> listOfSpares = new ArrayList<>();
 
 
     @Override
@@ -111,40 +115,47 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
         }
 
         if (viewId == R.id.openNcrExcelButton) {
-            createIntentForOpenExcel();
+            Intent i =createIntentForOpenExcel();
+            startActivityForResult(i, EXCEL_REQUEST_CODE);
         }
     }
 
     @Override
-    public void createIntentForOpenExcel() {
+    public Intent createIntentForOpenExcel() {
         Intent i = new Intent(Intent.ACTION_GET_CONTENT);
         i.setType("application/vnd.ms-excel");
 //      i.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivityForResult(i, EXCEL_REQUEST_CODE);
+        return i;
     }
 
     @Override
-    public List<Spare> createListOfSparesFromWorkBook(Context context,HSSFWorkbook workBook) {
-        // Get the first sheet from workbook
-        HSSFSheet mySheet = workBook.getSheetAt(0);
+    public ArrayList<Spare> createListOfSparesFromWorkBook(Context context, HSSFWorkbook workBook) throws ExecutionException, InterruptedException {
+        CreateListOfSparesTask task = new CreateListOfSparesTask();
+        task.execute(workBook);
+        return task.get();
+    }
 
-        /** We now need something to iterate through the cells.**/
-        Iterator rowIterator = mySheet.rowIterator();
-
-        while (rowIterator.hasNext()) {
-            HSSFRow myRow = (HSSFRow) rowIterator.next();
-            Iterator cellIterator = myRow.cellIterator();
-            while (cellIterator.hasNext()) {
-                HSSFCell myCell = (HSSFCell) cellIterator.next();
-                if (myCell.getCellType() == CellType.NUMERIC) {
-                    myCell.setCellType(CellType.STRING);
-                }
-                Log.d(TAG, "Cell value: " + myCell.toString());
-                Toast.makeText(context, "cell Value: " + myCell.toString(), Toast.LENGTH_SHORT).show();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
+        try {
+            if (workBook != null) {
+                setListOfSpares();
             }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return null;
+    }
+
+    private String validatePartNumber(String partNumber) {
+        if (partNumber.length() < 10) {
+            return "00" + partNumber;
+        }
+        return partNumber;
     }
 
     @Override
@@ -152,14 +163,26 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == EXCEL_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                Uri selectedImage = data.getData();
-                String filePath = null;
-                filePath = getPath(this, selectedImage);
-                File fileSource = new File(filePath);
-                workBook = getWorkBookFromExcel(this, filePath);
-
+                String filePath = getPathFromUri(data);
+                setWorkBookFromExcel(filePath);
+//                setListOfSpares();
             }
         }
+    }
+
+    private void setListOfSpares() throws ExecutionException, InterruptedException {
+        this.listOfSpares = createListOfSparesFromWorkBook(this, workBook);
+    }
+
+    private void setWorkBookFromExcel(String filePath) {
+        this.workBook = getWorkBookFromExcel(this, filePath);
+    }
+
+    private String getPathFromUri(Intent data) {
+        Uri selectedImage = data.getData();
+        String filePath;
+        filePath = getPath(this, selectedImage);
+        return filePath;
     }
 
     public static String getPath(final Context context, final Uri uri) {
@@ -329,5 +352,62 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
             return true;
         }
         return false;
+    }
+
+    private class CreateListOfSparesTask extends AsyncTask<HSSFWorkbook, Void, ArrayList<Spare>> {
+
+        @Override
+        protected ArrayList<Spare> doInBackground(HSSFWorkbook... hssfWorkbooks) {
+            HSSFSheet mySheet = hssfWorkbooks[0].getSheetAt(0);
+            Iterator rowIterator = mySheet.rowIterator();
+            ArrayList<Spare> spares = new ArrayList<>();
+            while (rowIterator.hasNext()) {
+                HSSFRow row = (HSSFRow) rowIterator.next();
+                Iterator cellIterator = row.cellIterator();
+                int cellCounter = 0;
+                Spare spare = new Spare();
+                while (cellIterator.hasNext()) {
+                    HSSFCell cell = (HSSFCell) cellIterator.next();
+                    if (cell.getCellType() == CellType.NUMERIC) {
+                        cell.setCellType(CellType.STRING);
+                    }
+                    Log.d(TAG, "Cell value: " + cell.toString());
+                    if (cellCounter == 0) {
+                        String partNumber = validatePartNumber(cell.toString());
+                        spare.setPartNumber(partNumber);
+                    }
+                    if (cellCounter == 1) {
+                        String name = cell.toString();
+                        spare.setName(name);
+                    }
+                    if (cellCounter == 2) {
+                        String state = cell.toString();
+                        spare.setState(state);
+                    }
+                    if (cellCounter == 3) {
+                        String quantity = cell.toString();
+                        spare.setQuantity(quantity);
+                    }
+                    if (cellCounter == 4) {
+                        String returnCode = cell.toString();
+                        spare.setReturnCode(returnCode);
+                    }
+                    if (!cellIterator.hasNext()) {
+                        spare.setLocation("garage");
+                        spares.add(spare);
+                    }
+                    cellCounter++;
+                }
+            }
+            return spares;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Spare> spares) {
+            super.onPostExecute(spares);
+            Toast.makeText(NcrAddSpareActivity.this, "List od spares created succesfully", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 }
