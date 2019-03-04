@@ -23,10 +23,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.apache.commons.compress.archivers.dump.InvalidFormatException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -34,6 +36,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 
 import ru.ssermakov.mystock.R;
@@ -45,6 +48,7 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
     private static final int EXCEL_REQUEST_CODE = 10;
     private static final String TAG = "EXCEL";
     private static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 23;
+    private static XSSFWorkbook myWorkBook;
     private EditText state, pn, desc, quantity, reworkCode;
     Button addSpareButton, openExcelButton;
     NcrAddSpareController ncrAddSpareController;
@@ -54,6 +58,11 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ncr_add_spare);
+
+
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
 
         ncrAddSpareController = new NcrAddSpareController(this);
 
@@ -102,8 +111,8 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
 
         if (viewId == R.id.openNcrExcelButton) {
             Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-            i.setType("application/vnd.ms-excel");
-//            i.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+//            i.setType("application/vnd.ms-excel");
+            i.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivityForResult(i, EXCEL_REQUEST_CODE);
 
@@ -295,16 +304,30 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
         try {
             // Creating Input Stream
             File file = new File(filename);
-            FileInputStream myInput = new FileInputStream(file);
+//            FileInputStream myInput = new FileInputStream(file);
 
             // Create a POIFSFileSystem object
-            POIFSFileSystem myFileSystem = new POIFSFileSystem(myInput);
+//            POIFSFileSystem myFileSystem = new POIFSFileSystem(myInput);
 
             // Create a workbook using the File System
-            HSSFWorkbook myWorkBook = new HSSFWorkbook(myFileSystem);
+//            HSSFWorkbook myWorkBook = new HSSFWorkbook(myFileSystem);
+
+
+            try {
+                OPCPackage pkg = OPCPackage.open(file);
+                myWorkBook = new XSSFWorkbook(pkg);
+                pkg.close();
+            } catch (InvalidFormatException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
 
             // Get the first sheet from workbook
-            HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+            XSSFSheet mySheet = myWorkBook.getSheetAt(0);
 
             /** We now need something to iterate through the cells.**/
             Iterator rowIter = mySheet.rowIterator();
