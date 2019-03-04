@@ -46,7 +46,7 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
     private static final String TAG = "EXCEL";
     private static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 23;
     private static XSSFWorkbook myWorkBook;
-    private EditText state, pn, desc, quantity, reworkCode;
+    private EditText state, pn, desc, quantity, reworkCode, location;
     Button addSpareButton, openExcelButton;
     NcrAddSpareController ncrAddSpareController;
     private HSSFWorkbook workBook;
@@ -69,6 +69,7 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
         desc = findViewById(R.id.nameNcrAddSpareEditText);
         quantity = findViewById(R.id.quantityNcrAddSpareEditText);
         reworkCode = findViewById(R.id.reworkNcrAddSpareEditText);
+        location = findViewById(R.id.locationNcrAddSpareEditText);
 
         addSpareButton = findViewById(R.id.addNcrSpareButton);
         openExcelButton = findViewById(R.id.openNcrExcelButton);
@@ -97,13 +98,15 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
             String desc = this.desc.getText().toString();
             String quantity = this.quantity.getText().toString();
             String rework = this.reworkCode.getText().toString();
+            String location = this.location.getText().toString();
 
             ncrAddSpareController.addSpareToDb(new Spare(
                     desc,
                     pn,
                     state,
                     rework,
-                    quantity
+                    quantity,
+                    location
             ));
         }
 

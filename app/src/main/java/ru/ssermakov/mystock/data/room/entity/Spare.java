@@ -13,13 +13,15 @@ public class Spare {
     private String state;
     private String returnCode;
     private String quantity;
+    private String location;
 
-    public Spare(String name, String partNumber, String state, String returnCode, String quantity) {
+    public Spare(String name, String partNumber, String state, String returnCode, String quantity, String location) {
         this.name = name;
         this.partNumber = partNumber;
         this.state = state;
         this.returnCode = returnCode;
         this.quantity = quantity;
+        this.location = location;
     }
 
     public int getId() {
@@ -68,5 +70,13 @@ public class Spare {
 
     public void setQuantity(String quantity) {
         this.quantity = quantity;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

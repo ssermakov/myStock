@@ -89,6 +89,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             holder.partNumber.setText(spare.getPartNumber());
             holder.name.setText(spare.getName());
             holder.quantity.setText(spare.getQuantity());
+            holder.location.setText(spare.getLocation());
         }
 
         @Override
@@ -102,6 +103,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             private TextView partNumber;
             private TextView name;
             private TextView quantity;
+            private TextView location;
 
             public CustomViewHolder(View itemView) {
                 super(itemView);
@@ -110,6 +112,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
                 this.partNumber = itemView.findViewById(R.id.pnTextView);
                 this.name = itemView.findViewById(R.id.nameTextView);
                 this.quantity = itemView.findViewById(R.id.quantityTextView);
+                this.location = itemView.findViewById(R.id.locationTextView);
 
             }
         }

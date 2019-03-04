@@ -71,4 +71,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
+
+    <TextView
+        android:id="@+id/locationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:text="garage"
+        app:layout_constraintBottom_toBottomOf="@+id/pnTextView"
+        app:layout_constraintStart_toEndOf="@+id/pnTextView"
+        app:layout_constraintTop_toTopOf="@+id/pnTextView" />
 </android.support.constraint.ConstraintLayout>
