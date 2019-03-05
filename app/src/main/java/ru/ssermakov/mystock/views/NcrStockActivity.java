@@ -1,17 +1,23 @@
 package ru.ssermakov.mystock.views;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.ssermakov.mystock.R;
@@ -26,6 +32,8 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
     private RecyclerView recycler;
     private CustomAdapter adapter;
     private NcrStockController ncrStockController;
+    private SearchView searchView;
+    private List<Spare> listOfSparesFiltered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +50,35 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.ncr_stock_menu, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.ncr_stock_find_menu).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                adapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.ncr_stock_menu) {
+        if (item.getItemId() == R.id.ncr_stock_add_menu) {
             ncrStockController.onAddSpareClick(this);
+        }
+        if (item.getItemId() == R.id.ncr_stock_find_menu) {
+//            ncrStockController.onFindSpareClick(this);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -56,6 +86,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
     @Override
     public void setUpAdapterAndView(List<Spare> listOfSpares) {
         this.listOfSpares = listOfSpares;
+        this.listOfSparesFiltered = listOfSpares;
         recycler.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CustomAdapter();
         recycler.setAdapter(adapter);
@@ -73,7 +104,8 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
         getListOfSparesFromDb();
     }
 
-    private class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
+    private class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
+            implements Filterable {
 
 
         @NonNull
@@ -84,7 +116,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
 
         @Override
         public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
-            Spare spare = listOfSpares.get(position);
+            Spare spare = listOfSparesFiltered.get(position);
             holder.state.setText(spare.getState());
             holder.partNumber.setText(spare.getPartNumber());
             holder.name.setText(spare.getName());
@@ -94,7 +126,42 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
 
         @Override
         public int getItemCount() {
-            return listOfSpares.size();
+            return listOfSparesFiltered.size();
+        }
+
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    String charString = constraint.toString();
+                    if (charString.isEmpty()) {
+                        listOfSparesFiltered = listOfSpares;
+                    } else {
+                        List<Spare> filteredList = new ArrayList<>();
+                        for (Spare spare : listOfSpares) {
+                            if (spare.getName().toLowerCase().contains(charString.toLowerCase()) ||
+                                    spare.getLocation().toLowerCase().contains(charString.toLowerCase()) ||
+                                    spare.getPartNumber().toLowerCase().contains(charString.toLowerCase()) ||
+                                    spare.getQuantity().toLowerCase().contains(charString.toLowerCase()) ||
+                                    spare.getReturnCode().toLowerCase().contains(charString.toLowerCase()) ||
+                                    spare.getState().toLowerCase().contains(charString.toLowerCase())) {
+                                filteredList.add(spare);
+                            }
+                        }
+                        listOfSparesFiltered = filteredList;
+                    }
+                    FilterResults results = new FilterResults();
+                    results.values = listOfSparesFiltered;
+                    return results;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    listOfSparesFiltered = (List<Spare>) results.values;
+                    notifyDataSetChanged();
+                }
+            };
         }
 
         class CustomViewHolder extends RecyclerView.ViewHolder {

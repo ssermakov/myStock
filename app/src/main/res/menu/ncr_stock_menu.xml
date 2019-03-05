@@ -2,13 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item
+        android:id="@+id/ncr_stock_find_menu"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="find"
+        android:visible="true"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/ncr_stock_menu"
+        android:id="@+id/ncr_stock_add_menu"
         android:icon="@drawable/ic_add_black_24dp"
         android:title="@string/add_spare"
         android:visible="true"
-        app:showAsAction="ifRoom"
-        />
+        app:showAsAction="ifRoom" />
+
 
 </menu>

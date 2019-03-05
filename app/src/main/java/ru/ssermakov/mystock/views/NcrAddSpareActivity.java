@@ -115,7 +115,7 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
         }
 
         if (viewId == R.id.openNcrExcelButton) {
-            Intent i =createIntentForOpenExcel();
+            Intent i = createIntentForOpenExcel();
             startActivityForResult(i, EXCEL_REQUEST_CODE);
         }
     }
@@ -131,10 +131,9 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public ArrayList<Spare> createListOfSparesFromWorkBook(Context context, HSSFWorkbook workBook) throws ExecutionException, InterruptedException {
-        CreateListOfSparesTask task = new CreateListOfSparesTask();
-        task.execute(workBook);
-        return task.get();
+        return ncrAddSpareController.getSpares(workBook);
     }
+
 
     @Override
     protected void onResume() {
@@ -151,12 +150,6 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private String validatePartNumber(String partNumber) {
-        if (partNumber.length() < 10) {
-            return "00" + partNumber;
-        }
-        return partNumber;
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -354,60 +347,60 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
         return false;
     }
 
-    private class CreateListOfSparesTask extends AsyncTask<HSSFWorkbook, Void, ArrayList<Spare>> {
-
-        @Override
-        protected ArrayList<Spare> doInBackground(HSSFWorkbook... hssfWorkbooks) {
-            HSSFSheet mySheet = hssfWorkbooks[0].getSheetAt(0);
-            Iterator rowIterator = mySheet.rowIterator();
-            ArrayList<Spare> spares = new ArrayList<>();
-            while (rowIterator.hasNext()) {
-                HSSFRow row = (HSSFRow) rowIterator.next();
-                Iterator cellIterator = row.cellIterator();
-                int cellCounter = 0;
-                Spare spare = new Spare();
-                while (cellIterator.hasNext()) {
-                    HSSFCell cell = (HSSFCell) cellIterator.next();
-                    if (cell.getCellType() == CellType.NUMERIC) {
-                        cell.setCellType(CellType.STRING);
-                    }
-                    Log.d(TAG, "Cell value: " + cell.toString());
-                    if (cellCounter == 0) {
-                        String partNumber = validatePartNumber(cell.toString());
-                        spare.setPartNumber(partNumber);
-                    }
-                    if (cellCounter == 1) {
-                        String name = cell.toString();
-                        spare.setName(name);
-                    }
-                    if (cellCounter == 2) {
-                        String state = cell.toString();
-                        spare.setState(state);
-                    }
-                    if (cellCounter == 3) {
-                        String quantity = cell.toString();
-                        spare.setQuantity(quantity);
-                    }
-                    if (cellCounter == 4) {
-                        String returnCode = cell.toString();
-                        spare.setReturnCode(returnCode);
-                    }
-                    if (!cellIterator.hasNext()) {
-                        spare.setLocation("garage");
-                        spares.add(spare);
-                    }
-                    cellCounter++;
-                }
-            }
-            return spares;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Spare> spares) {
-            super.onPostExecute(spares);
-            Toast.makeText(NcrAddSpareActivity.this, "List od spares created succesfully", Toast.LENGTH_SHORT).show();
-        }
-
-
-    }
+//    private class CreateListOfSparesTask extends AsyncTask<HSSFWorkbook, Void, ArrayList<Spare>> {
+//
+//        @Override
+//        protected ArrayList<Spare> doInBackground(HSSFWorkbook... hssfWorkbooks) {
+//            HSSFSheet mySheet = hssfWorkbooks[0].getSheetAt(0);
+//            Iterator rowIterator = mySheet.rowIterator();
+//            ArrayList<Spare> spares = new ArrayList<>();
+//            while (rowIterator.hasNext()) {
+//                HSSFRow row = (HSSFRow) rowIterator.next();
+//                Iterator cellIterator = row.cellIterator();
+//                int cellCounter = 0;
+//                Spare spare = new Spare();
+//                while (cellIterator.hasNext()) {
+//                    HSSFCell cell = (HSSFCell) cellIterator.next();
+//                    if (cell.getCellType() == CellType.NUMERIC) {
+//                        cell.setCellType(CellType.STRING);
+//                    }
+//                    Log.d(TAG, "Cell value: " + cell.toString());
+//                    if (cellCounter == 0) {
+//                        String partNumber = validatePartNumber(cell.toString());
+//                        spare.setPartNumber(partNumber);
+//                    }
+//                    if (cellCounter == 1) {
+//                        String name = cell.toString();
+//                        spare.setName(name);
+//                    }
+//                    if (cellCounter == 2) {
+//                        String state = cell.toString();
+//                        spare.setState(state);
+//                    }
+//                    if (cellCounter == 3) {
+//                        String quantity = cell.toString();
+//                        spare.setQuantity(quantity);
+//                    }
+//                    if (cellCounter == 4) {
+//                        String returnCode = cell.toString();
+//                        spare.setReturnCode(returnCode);
+//                    }
+//                    if (!cellIterator.hasNext()) {
+//                        spare.setLocation("garage");
+//                        spares.add(spare);
+//                    }
+//                    cellCounter++;
+//                }
+//            }
+//            return spares;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(ArrayList<Spare> spares) {
+//            super.onPostExecute(spares);
+//            Toast.makeText(NcrAddSpareActivity.this, "List od spares created succesfully", Toast.LENGTH_SHORT).show();
+//        }
+//
+//
+//    }
 }
