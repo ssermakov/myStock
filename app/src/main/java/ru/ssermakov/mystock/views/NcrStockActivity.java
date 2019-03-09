@@ -34,6 +34,8 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
     private NcrStockController ncrStockController;
     private SearchView searchView;
     private List<Spare> listOfSparesFiltered;
+    private int previousExpandedPosition = -1;
+    private int expandedPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +124,25 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             holder.name.setText(spare.getName());
             holder.quantity.setText(spare.getQuantity());
             holder.location.setText(spare.getLocation());
+
+            final boolean isExpanded = position== expandedPosition;
+            if (isExpanded) {
+                holder.details.setVisibility(View.VISIBLE);
+            } else holder.details.setVisibility(View.GONE);
+
+            holder.itemView.setActivated(isExpanded);
+
+            if (isExpanded)
+                previousExpandedPosition = position;
+
+            holder.itemView.setOnClickListener(v -> {
+                if (isExpanded) {
+                    expandedPosition = -1;
+                } else expandedPosition = position;
+
+                notifyItemChanged(previousExpandedPosition);
+                notifyItemChanged(position);
+            });
         }
 
         @Override
@@ -166,6 +187,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
 
         class CustomViewHolder extends RecyclerView.ViewHolder {
 
+            public View details;
             private TextView state;
             private TextView partNumber;
             private TextView name;
@@ -180,6 +202,10 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
                 this.name = itemView.findViewById(R.id.nameTextView);
                 this.quantity = itemView.findViewById(R.id.quantityTextView);
                 this.location = itemView.findViewById(R.id.locationTextView);
+                this.details = itemView.findViewById(R.id.expandedView);
+
+
+
 
             }
         }

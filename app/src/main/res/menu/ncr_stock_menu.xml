@@ -4,7 +4,6 @@
 
     <item
         android:id="@+id/ncr_stock_find_menu"
-        android:icon="@drawable/ic_search_black_24dp"
         android:title="find"
         android:visible="true"
         app:actionViewClass="android.support.v7.widget.SearchView"
