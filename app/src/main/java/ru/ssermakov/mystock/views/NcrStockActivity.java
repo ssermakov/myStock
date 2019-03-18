@@ -1,6 +1,8 @@
 package ru.ssermakov.mystock.views;
 
 import android.app.SearchManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,13 +139,26 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
                 previousExpandedPosition = position;
 
             holder.itemView.setOnClickListener(v -> {
-                if (isExpanded) {
-                    expandedPosition = -1;
-                } else expandedPosition = position;
-
-                notifyItemChanged(previousExpandedPosition);
-                notifyItemChanged(position);
+                expandItem(position, isExpanded);
+                copyPartNumberToClipBoard(holder);
             });
+        }
+
+        private void copyPartNumberToClipBoard(CustomViewHolder holder) {
+            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData data = ClipData.newPlainText("partnumber", holder.partNumber.getText().toString());
+            clipboardManager.setPrimaryClip(data);
+
+            Toast.makeText(getApplicationContext(),"Text Copied : " + holder.partNumber.getText().toString(), Toast.LENGTH_SHORT).show();
+        }
+
+        private void expandItem(int position, boolean isExpanded) {
+            if (isExpanded) {
+                expandedPosition = -1;
+            } else expandedPosition = position;
+
+            notifyItemChanged(previousExpandedPosition);
+            notifyItemChanged(position);
         }
 
         @Override
