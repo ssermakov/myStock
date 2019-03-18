@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -122,6 +123,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
         @Override
         public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
             Spare spare = listOfSparesFiltered.get(position);
+
             holder.state.setText(spare.getState());
             holder.partNumber.setText(spare.getPartNumber());
             holder.name.setText(spare.getName());
@@ -131,7 +133,16 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             final boolean isExpanded = position== expandedPosition;
             if (isExpanded) {
                 holder.details.setVisibility(View.VISIBLE);
-            } else holder.details.setVisibility(View.GONE);
+                holder.useButton.setVisibility(View.VISIBLE);
+                holder.moveButton.setVisibility(View.VISIBLE);
+                holder.addButton.setVisibility(View.VISIBLE);
+            } else {
+                holder.details.setVisibility(View.GONE);
+                holder.moveButton.setVisibility(View.GONE);
+                holder.useButton.setVisibility(View.GONE);
+                holder.addButton.setVisibility(View.GONE);
+
+            }
 
             holder.itemView.setActivated(isExpanded);
 
@@ -142,23 +153,6 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
                 expandItem(position, isExpanded);
                 copyPartNumberToClipBoard(holder);
             });
-        }
-
-        private void copyPartNumberToClipBoard(CustomViewHolder holder) {
-            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData data = ClipData.newPlainText("partnumber", holder.partNumber.getText().toString());
-            clipboardManager.setPrimaryClip(data);
-
-            Toast.makeText(getApplicationContext(),"Text Copied : " + holder.partNumber.getText().toString(), Toast.LENGTH_SHORT).show();
-        }
-
-        private void expandItem(int position, boolean isExpanded) {
-            if (isExpanded) {
-                expandedPosition = -1;
-            } else expandedPosition = position;
-
-            notifyItemChanged(previousExpandedPosition);
-            notifyItemChanged(position);
         }
 
         @Override
@@ -201,6 +195,23 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             };
         }
 
+        private void copyPartNumberToClipBoard(CustomViewHolder holder) {
+            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData data = ClipData.newPlainText("partnumber", holder.partNumber.getText().toString());
+            clipboardManager.setPrimaryClip(data);
+
+            Toast.makeText(getApplicationContext(),"Text Copied : " + holder.partNumber.getText().toString(), Toast.LENGTH_SHORT).show();
+        }
+
+        private void expandItem(int position, boolean isExpanded) {
+            if (isExpanded) {
+                expandedPosition = -1;
+            } else expandedPosition = position;
+
+            notifyItemChanged(previousExpandedPosition);
+            notifyItemChanged(position);
+        }
+
         class CustomViewHolder extends RecyclerView.ViewHolder {
 
             public View details;
@@ -209,6 +220,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             private TextView name;
             private TextView quantity;
             private TextView location;
+            private Button useButton, moveButton, addButton;
 
             public CustomViewHolder(View itemView) {
                 super(itemView);
@@ -219,6 +231,9 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
                 this.quantity = itemView.findViewById(R.id.quantityTextView);
                 this.location = itemView.findViewById(R.id.locationTextView);
                 this.details = itemView.findViewById(R.id.expandedView);
+                this.useButton = itemView.findViewById(R.id.useButton);
+                this.moveButton = itemView.findViewById(R.id.moveButton);
+                this.addButton = itemView.findViewById(R.id.addButton);
 
 
 
