@@ -9,4 +9,5 @@ public interface NcrStockInterface {
     void setUpAdapterAndView(List<Spare> listOfSpares);
 
     void getListOfSparesFromDb();
+
 }

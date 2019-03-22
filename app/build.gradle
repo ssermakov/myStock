@@ -43,6 +43,8 @@ dependencies {
     implementation 'org.apache.poi:poi:4.0.1'
     implementation files('libs/poi-src-4.0.1-20181203.zip')
 
+//    implementation 'androidx.room:room-rxjava2:2.1.0-alpha02'
+
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.0.1'
 

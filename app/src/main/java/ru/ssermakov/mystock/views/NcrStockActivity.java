@@ -110,7 +110,11 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
         getListOfSparesFromDb();
     }
 
-    private class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
+    public CustomAdapter getAdapter() {
+        return adapter;
+    }
+
+    public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
             implements Filterable {
 
 
@@ -152,6 +156,10 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             holder.itemView.setOnClickListener(v -> {
                 expandItem(position, isExpanded);
                 copyPartNumberToClipBoard(holder);
+            });
+
+            holder.useButton.setOnClickListener(v -> {
+                ncrStockController.onUseClickButton(holder, spare, NcrStockActivity.this);
             });
         }
 
@@ -212,7 +220,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             notifyItemChanged(position);
         }
 
-        class CustomViewHolder extends RecyclerView.ViewHolder {
+        public class CustomViewHolder extends RecyclerView.ViewHolder {
 
             public View details;
             private TextView state;
