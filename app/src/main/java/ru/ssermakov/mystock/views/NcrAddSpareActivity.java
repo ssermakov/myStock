@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,19 +22,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.apache.commons.math3.geometry.partitioning.BSPTreeVisitor;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 import ru.ssermakov.mystock.R;
@@ -68,12 +61,12 @@ public class NcrAddSpareActivity extends AppCompatActivity implements View.OnCli
 
         ncrAddSpareController = new NcrAddSpareController(this);
 
-        state = findViewById(R.id.stateNcrAddEditText);
-        pn = findViewById(R.id.pnNcrAddSpareEditText);
-        desc = findViewById(R.id.nameNcrAddSpareEditText);
-        quantity = findViewById(R.id.quantityNcrAddSpareEditText);
-        reworkCode = findViewById(R.id.reworkNcrAddSpareEditText);
-        location = findViewById(R.id.locationNcrAddSpareEditText);
+        state = findViewById(R.id.stateEditDlgEditText);
+        pn = findViewById(R.id.pnEditDlgEditText);
+        desc = findViewById(R.id.nameEditDlgEditText);
+        quantity = findViewById(R.id.quantityEditDlgEditText);
+        reworkCode = findViewById(R.id.reworkEditDlgEditText);
+        location = findViewById(R.id.locationEditDlgEditText);
 
         addSpareButton = findViewById(R.id.addNcrSpareButton);
         openExcelButton = findViewById(R.id.openNcrExcelButton);

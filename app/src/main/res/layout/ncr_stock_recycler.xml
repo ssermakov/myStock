@@ -101,12 +101,12 @@
         app:layout_constraintTop_toTopOf="@+id/expandedView" />
 
     <Button
-        android:id="@+id/moveButton"
+        android:id="@+id/editEditDlgButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
-        android:text="move"
+        android:text="edit"
         app:layout_constraintBottom_toBottomOf="@+id/expandedView"
         app:layout_constraintStart_toEndOf="@+id/useButton"
         app:layout_constraintTop_toTopOf="@+id/expandedView" />
@@ -119,6 +119,6 @@
         android:layout_marginBottom="8dp"
         android:text="add"
         app:layout_constraintBottom_toBottomOf="@+id/expandedView"
-        app:layout_constraintStart_toEndOf="@+id/moveButton"
+        app:layout_constraintStart_toEndOf="@+id/editEditDlgButton"
         app:layout_constraintTop_toTopOf="@+id/expandedView" />
 </android.support.constraint.ConstraintLayout>

@@ -130,21 +130,21 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
         public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
             Spare spare = listOfSparesFiltered.get(position);
 
-            holder.state.setText(spare.getState());
-            holder.partNumber.setText(spare.getPartNumber());
-            holder.name.setText(spare.getName());
-            holder.quantity.setText(spare.getQuantity());
-            holder.location.setText(spare.getLocation());
+            holder.state.setText(spare.getState().toUpperCase());
+            holder.partNumber.setText(spare.getPartNumber().toUpperCase());
+            holder.name.setText(spare.getName().toUpperCase());
+            holder.quantity.setText(spare.getQuantity().toUpperCase());
+            holder.location.setText(spare.getLocation().toUpperCase());
 
             final boolean isExpanded = position== expandedPosition;
             if (isExpanded) {
                 holder.details.setVisibility(View.VISIBLE);
                 holder.useButton.setVisibility(View.VISIBLE);
-                holder.moveButton.setVisibility(View.VISIBLE);
+                holder.editButton.setVisibility(View.VISIBLE);
                 holder.addButton.setVisibility(View.VISIBLE);
             } else {
                 holder.details.setVisibility(View.GONE);
-                holder.moveButton.setVisibility(View.GONE);
+                holder.editButton.setVisibility(View.GONE);
                 holder.useButton.setVisibility(View.GONE);
                 holder.addButton.setVisibility(View.GONE);
 
@@ -168,6 +168,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
                 identifier = "onAdd";
                 ncrStockController.onAddClickButton(holder, spare, identifier, NcrStockActivity.this);
             });
+            holder.editButton.setOnClickListener(v -> ncrStockController.onEditClickButton(spare, NcrStockActivity.this));
         }
 
         @Override
@@ -235,7 +236,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             private TextView name;
             private TextView quantity;
             private TextView location;
-            private Button useButton, moveButton, addButton;
+            private Button useButton, editButton, addButton;
 
             public CustomViewHolder(View itemView) {
                 super(itemView);
@@ -247,7 +248,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
                 this.location = itemView.findViewById(R.id.locationTextView);
                 this.details = itemView.findViewById(R.id.expandedView);
                 this.useButton = itemView.findViewById(R.id.useButton);
-                this.moveButton = itemView.findViewById(R.id.moveButton);
+                this.editButton = itemView.findViewById(R.id.editEditDlgButton);
                 this.addButton = itemView.findViewById(R.id.addButton);
 
 

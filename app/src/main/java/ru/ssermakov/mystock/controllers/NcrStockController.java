@@ -31,6 +31,7 @@ import ru.ssermakov.mystock.data.room.dao.SpareDao;
 import ru.ssermakov.mystock.data.room.entity.Spare;
 import ru.ssermakov.mystock.views.NcrAddSpareActivity;
 import ru.ssermakov.mystock.views.NcrStockActivity;
+import ru.ssermakov.mystock.views.fragments.EditPickerFragment;
 import ru.ssermakov.mystock.views.fragments.QuantityPickerFragment;
 import ru.ssermakov.mystock.views.interfaces.NcrStockInterface;
 
@@ -115,6 +116,13 @@ public class NcrStockController {
 
     public void onAddClickButton(NcrStockActivity.CustomAdapter.CustomViewHolder holder, Spare spare, String identifier, NcrStockActivity ncrStockActivity) {
         createPickerFragment(spare, identifier, ncrStockActivity);
+    }
+
+    public void onEditClickButton(Spare spare, NcrStockActivity ncrStockActivity) {
+        EditPickerFragment fragment = new EditPickerFragment();
+        fragment.setSpare(spare);
+        fragment.setNcrStockController(this);
+        fragment.show(ncrStockActivity.getFragmentManager(), "pick quantity");
     }
 
     private void createPickerFragment(Spare spare, String identifier, NcrStockActivity ncrStockActivity) {

@@ -20,7 +20,7 @@ public class QuantityPickerFragment extends DialogFragment {
     private NcrStockController ncrStockController;
 
     private AlertDialog dialog;
-    private String identidier;
+    private String identifier;
     public static final String ON_USE = "onUse";
     public static final String ON_ADD = "onAdd";
 
@@ -37,7 +37,7 @@ public class QuantityPickerFragment extends DialogFragment {
     }
 
     public void setIdentifier(String identifier) {
-        this.identidier = identifier;
+        this.identifier = identifier;
     }
 
     @Override
@@ -49,14 +49,14 @@ public class QuantityPickerFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()))
                 .setView(v);
-        if (identidier.equals(ON_USE))builder.setTitle("use spare");
-        if (identidier.equals(ON_ADD))builder.setTitle("add spare");
+        if (identifier.equals(ON_USE))builder.setTitle("use spare");
+        if (identifier.equals(ON_ADD))builder.setTitle("add spare");
         dialog = builder.create();
 
         buttonSet.setOnClickListener(v1 -> {
             Integer currentAmount = Integer.valueOf(spare.getQuantity());
-            if (identidier.equals(ON_USE)) update(picker, currentAmount);
-            if (identidier.equals(ON_ADD)) add(picker, currentAmount);
+            if (identifier.equals(ON_USE)) use(picker, currentAmount);
+            if (identifier.equals(ON_ADD)) add(picker, currentAmount);
             dialog.cancel();
         });
 
@@ -77,7 +77,7 @@ public class QuantityPickerFragment extends DialogFragment {
         ncrStockController.updateSpare(spare);
     }
 
-    private void update(NumberPicker picker, Integer currentAmount) {
+    private void use(NumberPicker picker, Integer currentAmount) {
         int newAmount = currentAmount - picker.getValue();
         spare.setQuantity(Integer.toString(newAmount));
         ncrStockController.updateSpare(spare);
