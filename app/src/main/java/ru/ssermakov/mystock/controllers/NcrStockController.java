@@ -36,11 +36,11 @@ import ru.ssermakov.mystock.views.interfaces.NcrStockInterface;
 
 public class NcrStockController {
 
-    private NcrStockInterface ncrStockView;
+    private NcrStockActivity ncrStockView;
 
     private SpareDao spareDao;
 
-    public NcrStockController(NcrStockInterface ncrStockView) {
+    public NcrStockController(NcrStockActivity ncrStockView) {
         this.ncrStockView = ncrStockView;
         SparesDataBase db = App.getInstance().getDb();
         this.spareDao = db.spareDao();
@@ -87,6 +87,7 @@ public class NcrStockController {
                     @Override
                     public void onComplete() {
                         Log.d("update", "update");
+                        ncrStockView.getListOfSparesFromDb();
                     }
 
                     @Override
@@ -108,11 +109,19 @@ public class NcrStockController {
         getListFromDataSource();
     }
 
-    public void onUseClickButton(NcrStockActivity.CustomAdapter.CustomViewHolder holder, Spare spare, NcrStockActivity ncrStockActivity) {
+    public void onUseClickButton(NcrStockActivity.CustomAdapter.CustomViewHolder holder, Spare spare, String identifier, NcrStockActivity ncrStockActivity) {
+        createPickerFragment(spare, identifier, ncrStockActivity);
+    }
+
+    public void onAddClickButton(NcrStockActivity.CustomAdapter.CustomViewHolder holder, Spare spare, String identifier, NcrStockActivity ncrStockActivity) {
+        createPickerFragment(spare, identifier, ncrStockActivity);
+    }
+
+    private void createPickerFragment(Spare spare, String identifier, NcrStockActivity ncrStockActivity) {
         QuantityPickerFragment fragment = new QuantityPickerFragment();
         fragment.setSpare(spare);
         fragment.setNcrStockController(this);
+        fragment.setIdentifier(identifier);
         fragment.show(ncrStockActivity.getFragmentManager(), "pick quantity");
     }
-
 }

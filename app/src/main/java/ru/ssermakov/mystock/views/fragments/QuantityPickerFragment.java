@@ -20,6 +20,9 @@ public class QuantityPickerFragment extends DialogFragment {
     private NcrStockController ncrStockController;
 
     private AlertDialog dialog;
+    private String identidier;
+    public static final String ON_USE = "onUse";
+    public static final String ON_ADD = "onAdd";
 
     public void setSpare(Spare spare) {
         this.spare = spare;
@@ -33,6 +36,10 @@ public class QuantityPickerFragment extends DialogFragment {
         this.ncrStockController = ncrStockController;
     }
 
+    public void setIdentifier(String identifier) {
+        this.identidier = identifier;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.picker_dialog, null);
@@ -41,16 +48,15 @@ public class QuantityPickerFragment extends DialogFragment {
         Button buttonCancel = v.findViewById(R.id.buttonCancel);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()))
-                .setTitle("title")
                 .setView(v);
-
+        if (identidier.equals(ON_USE))builder.setTitle("use spare");
+        if (identidier.equals(ON_ADD))builder.setTitle("add spare");
         dialog = builder.create();
 
         buttonSet.setOnClickListener(v1 -> {
             Integer currentAmount = Integer.valueOf(spare.getQuantity());
-            Integer newAmount = currentAmount - picker.getValue();
-            spare.setQuantity(newAmount.toString());
-            ncrStockController.updateSpare(spare);
+            if (identidier.equals(ON_USE)) update(picker, currentAmount);
+            if (identidier.equals(ON_ADD)) add(picker, currentAmount);
             dialog.cancel();
         });
 
@@ -65,5 +71,16 @@ public class QuantityPickerFragment extends DialogFragment {
 
     }
 
+    private void add(NumberPicker picker, Integer currentAmount) {
+        int newAmount = currentAmount + picker.getValue();
+        spare.setQuantity(Integer.toString(newAmount));
+        ncrStockController.updateSpare(spare);
+    }
+
+    private void update(NumberPicker picker, Integer currentAmount) {
+        int newAmount = currentAmount - picker.getValue();
+        spare.setQuantity(Integer.toString(newAmount));
+        ncrStockController.updateSpare(spare);
+    }
 
 }

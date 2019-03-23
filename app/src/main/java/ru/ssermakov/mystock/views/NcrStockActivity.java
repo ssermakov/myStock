@@ -118,6 +118,8 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             implements Filterable {
 
 
+        private String identifier;
+
         @NonNull
         @Override
         public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -159,7 +161,12 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             });
 
             holder.useButton.setOnClickListener(v -> {
-                ncrStockController.onUseClickButton(holder, spare, NcrStockActivity.this);
+                identifier = "onUse";
+                ncrStockController.onUseClickButton(holder, spare, identifier, NcrStockActivity.this);
+            });
+            holder.addButton.setOnClickListener(v -> {
+                identifier = "onAdd";
+                ncrStockController.onAddClickButton(holder, spare, identifier, NcrStockActivity.this);
             });
         }
 
