@@ -135,6 +135,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             holder.name.setText(spare.getName().toUpperCase());
             holder.quantity.setText(spare.getQuantity().toUpperCase());
             holder.location.setText(spare.getLocation().toUpperCase());
+            holder.rework.setText(spare.getReturnCode().toUpperCase());
 
             final boolean isExpanded = position== expandedPosition;
             if (isExpanded) {
@@ -157,7 +158,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
 
             holder.itemView.setOnClickListener(v -> {
                 expandItem(position, isExpanded);
-                copyPartNumberToClipBoard(holder);
+                ncrStockController.copyPartNumberToClipBoard(holder.partNumber.getText().toString(), NcrStockActivity.this);
             });
 
             holder.useButton.setOnClickListener(v -> {
@@ -211,7 +212,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             };
         }
 
-        private void copyPartNumberToClipBoard(CustomViewHolder holder) {
+        private void copyPartNumberToClipBoard(CustomViewHolder holder, NcrStockActivity ncrStockActivity) {
             ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData data = ClipData.newPlainText("partnumber", holder.partNumber.getText().toString());
             clipboardManager.setPrimaryClip(data);
@@ -232,10 +233,11 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
 
             public View details;
             private TextView state;
-            private TextView partNumber;
+            public TextView partNumber;
             private TextView name;
             private TextView quantity;
             private TextView location;
+            private TextView rework;
             private Button useButton, editButton, addButton;
 
             public CustomViewHolder(View itemView) {
@@ -246,6 +248,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
                 this.name = itemView.findViewById(R.id.nameTextView);
                 this.quantity = itemView.findViewById(R.id.quantityTextView);
                 this.location = itemView.findViewById(R.id.locationTextView);
+                this.rework = itemView.findViewById(R.id.reworkCodetextView);
                 this.details = itemView.findViewById(R.id.expandedView);
                 this.useButton = itemView.findViewById(R.id.useButton);
                 this.editButton = itemView.findViewById(R.id.editEditDlgButton);

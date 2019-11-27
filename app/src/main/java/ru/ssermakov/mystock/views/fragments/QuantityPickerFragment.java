@@ -81,6 +81,10 @@ public class QuantityPickerFragment extends DialogFragment {
         int newAmount = currentAmount - picker.getValue();
         spare.setQuantity(Integer.toString(newAmount));
         ncrStockController.updateSpare(spare);
+
+        ncrStockController.copyPartNumberToClipBoard(
+                ncrStockController.makeStringForWriteOff(picker.getValue(), spare.getPartNumber()),
+                ncrStockController.ncrStockView);
     }
 
 }

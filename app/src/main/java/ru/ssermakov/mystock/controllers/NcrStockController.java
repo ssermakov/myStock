@@ -2,6 +2,8 @@ package ru.ssermakov.mystock.controllers;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,7 +39,7 @@ import ru.ssermakov.mystock.views.interfaces.NcrStockInterface;
 
 public class NcrStockController {
 
-    private NcrStockActivity ncrStockView;
+    public NcrStockActivity ncrStockView;
 
     private SpareDao spareDao;
 
@@ -131,5 +133,18 @@ public class NcrStockController {
         fragment.setNcrStockController(this);
         fragment.setIdentifier(identifier);
         fragment.show(ncrStockActivity.getFragmentManager(), "pick quantity");
+    }
+
+
+    public void copyPartNumberToClipBoard(String string, NcrStockActivity ncrStockActivity) {
+        ClipboardManager clipboardManager = (ClipboardManager) ncrStockActivity.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData data = ClipData.newPlainText("partnumber", string);
+        clipboardManager.setPrimaryClip(data);
+
+        Toast.makeText(ncrStockActivity.getApplicationContext(),"Text Copied : " + string, Toast.LENGTH_SHORT).show();
+    }
+
+    public String makeStringForWriteOff(int value, String partNumber) {
+        return partNumber + "(" + Integer.toString(value) + ")" + "(b)";
     }
 }
