@@ -1,7 +1,7 @@
 package ru.ssermakov.mystock.app;
 
 import android.app.Application;
-import android.arch.persistence.room.Room;
+import androidx.room.Room;
 
 import ru.ssermakov.mystock.data.room.SparesDataBase;
 

@@ -1,7 +1,7 @@
 package ru.ssermakov.mystock.data.room;
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.RoomDatabase;
+import androidx.room.Database;
+import androidx.room.RoomDatabase;
 
 
 import ru.ssermakov.mystock.data.room.dao.SpareDao;
