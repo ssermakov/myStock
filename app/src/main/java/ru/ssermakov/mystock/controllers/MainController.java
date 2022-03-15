@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import ru.ssermakov.mystock.views.NcrStockActivity;
+import ru.ssermakov.mystock.views.PbfStockActivity;
 import ru.ssermakov.mystock.views.interfaces.MainActivityInterface;
 
 public class MainController {
@@ -16,6 +17,11 @@ public class MainController {
 
     public void onNcrTextViewClick(Context context) {
         Intent i = new Intent(context, NcrStockActivity.class);
+        context.startActivity(i);
+    }
+
+    public void onPbfTextViewClick(Context context) {
+        Intent i = new Intent(context, PbfStockActivity.class);
         context.startActivity(i);
     }
 }

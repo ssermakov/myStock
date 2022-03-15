@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity implements
         MainActivityInterface,
         View.OnClickListener {
 
-    private TextView ncrTextView;
+    private TextView ncrTextView, pbfTextView;
     private MainController mainController;
 
     @Override
@@ -25,6 +25,9 @@ public class MainActivity extends AppCompatActivity implements
 
         ncrTextView = findViewById(R.id.ncrTextView);
         ncrTextView.setOnClickListener(this);
+
+        pbfTextView = findViewById(R.id.pbfTextView);
+        pbfTextView.setOnClickListener(this);
     }
 
     @Override
@@ -33,10 +36,18 @@ public class MainActivity extends AppCompatActivity implements
         if (viewId == R.id.ncrTextView){
             startNcrStockActivity();
         }
+        if (viewId == R.id.pbfTextView){
+            startPbfStockActivity();
+        }
     }
 
     @Override
     public void startNcrStockActivity() {
         mainController.onNcrTextViewClick(this);
+    }
+
+    @Override
+    public void startPbfStockActivity() {
+        mainController.onPbfTextViewClick(this);
     }
 }

@@ -19,7 +19,8 @@ public class ExampleInstrumentedTest {
     @Test
     public void useAppContext() {
         // Context of the app under addSpareToDb.
-        Context appContext = InstrumentationRegistry.getTargetContext();
+//        Context appContext = InstrumentationRegistry.getTargetContext();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
         assertEquals("ru.ssermakov.mystock", appContext.getPackageName());
     }
