@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pbfConstraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <Button
+        android:id="@+id/addButtonId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="add"
+        app:layout_constraintBottom_toBottomOf="@+id/expandedPbfView"
+        app:layout_constraintEnd_toStartOf="@+id/editButtonId"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/useButtonId"
+        app:layout_constraintTop_toTopOf="@+id/expandedPbfView" />
+
+    <Button
+        android:id="@+id/editButtonId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="edit"
+        app:layout_constraintBottom_toBottomOf="@+id/expandedPbfView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/addButtonId"
+        app:layout_constraintTop_toTopOf="@+id/expandedPbfView" />
+
+    <Button
+        android:id="@+id/useButtonId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="use"
+        app:layout_constraintBottom_toBottomOf="@+id/expandedPbfView"
+        app:layout_constraintEnd_toStartOf="@+id/addButtonId"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/expandedPbfView" />
+
+    <TextView
+        android:id="@+id/pbfNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Pax S920"
+        app:layout_constraintEnd_toStartOf="@+id/pbfSerialNumberTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/pbfCustomerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Альфа Банк"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/pbfQuantityTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/pbfStateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Bad"
+        app:layout_constraintEnd_toStartOf="@+id/pbfQuantityTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/pbfSerialNumberTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/pbfQuantityTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="1"
+        app:layout_constraintEnd_toStartOf="@+id/pbfCustomerTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/pbfStateTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/pbfSerialNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="6N459658"
+        app:layout_constraintEnd_toStartOf="@+id/pbfStateTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/pbfNameTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/pbfConnectioTypeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="sim"
+        app:layout_constraintStart_toStartOf="@+id/pbfNameTextView"
+        app:layout_constraintTop_toBottomOf="@+id/pbfNameTextView" />
+
+    <TextView
+        android:id="@+id/pbfJiraWorkOrderTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Alpha-25652"
+        app:layout_constraintStart_toStartOf="@+id/pbfSerialNumberTextView"
+        app:layout_constraintTop_toBottomOf="@+id/pbfSerialNumberTextView" />
+
+    <TextView
+        android:id="@+id/pbfCommentTextView"
+        android:layout_width="165dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Работы проведены без замечаний. Тестовые операции проведены."
+        app:layout_constraintStart_toStartOf="@+id/pbfStateTextView"
+        app:layout_constraintTop_toBottomOf="@+id/pbfStateTextView" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/expandedPbfView"
+        tools:layout_editor_absoluteX="1dp" />
+
+    <View
+        android:id="@+id/expandedPbfView"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="8dp"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@+id/pbfCommentTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

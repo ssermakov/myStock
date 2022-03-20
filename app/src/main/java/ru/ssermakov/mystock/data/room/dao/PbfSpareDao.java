@@ -16,11 +16,13 @@ public interface PbfSpareDao {
     @Query("SELECT * FROM pbfSpares")
     Single<List<PbfSpare>> getAll();
 
-    @Insert
-    Long insertPbfSpare(PbfSpare pbfSpare);
+    @Query("SELECT * FROM pbfSpares WHERE id = :id")
+    Single<List<PbfSpare>> getById(long id);
 
     @Update
     void updatePbfSpare(PbfSpare pbfSpare);
 
 
+    @Insert
+    Long insertPbfSpare(PbfSpare pbfSpare);
 }

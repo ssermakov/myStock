@@ -18,7 +18,12 @@ public class Spare {
     public Spare() {
     }
 
-    public Spare(String name, String partNumber, String state, String returnCode, String quantity, String location) {
+    public Spare(String name,
+                 String partNumber,
+                 String state,
+                 String returnCode,
+                 String quantity,
+                 String location) {
         this.name = name;
         this.partNumber = partNumber;
         this.state = state;

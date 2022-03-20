@@ -1,29 +1,49 @@
 package ru.ssermakov.mystock.data.room.entity;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity (tableName = "pbfSpares")
+@Entity(tableName = "pbfSpares")
 public class PbfSpare {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
+
+    @ColumnInfo(defaultValue = "")
     private String name;
+    @ColumnInfo(defaultValue = "")
     private String serialNumber;
+    @ColumnInfo(defaultValue = "")
     private String state;
+    @ColumnInfo(defaultValue = "")
     private String customer;
+    @ColumnInfo(defaultValue = "")
+    private String connectionType;
+    @ColumnInfo(defaultValue = "")
+    private String jiraWorkOrder;
+    @ColumnInfo(defaultValue = "")
     private String quantity;
+    @ColumnInfo(defaultValue = "")
     private String comment;
 
     public PbfSpare() {
     }
 
-    public PbfSpare(int id, String name, String serialNumber, String state, String customer, String quantity, String comment) {
-        this.id = id;
+    public PbfSpare(String name,
+                    String serialNumber,
+                    String state,
+                    String customer,
+                    String connectionType,
+                    String jiraWorkOrder,
+                    String quantity,
+                    String comment) {
         this.name = name;
         this.serialNumber = serialNumber;
         this.state = state;
         this.customer = customer;
+        this.connectionType = connectionType;// sim, ethernet, wi-fi
+        this.jiraWorkOrder = jiraWorkOrder;
         this.quantity = quantity;
         this.comment = comment;
     }
@@ -64,6 +84,22 @@ public class PbfSpare {
         return customer;
     }
 
+    public String getConnectionType() {
+        return connectionType;
+    }
+
+    public void setConnectionType(String connectionType) {
+        this.connectionType = connectionType;
+    }
+
+    public String getJiraWorkOrder() {
+        return jiraWorkOrder;
+    }
+
+    public void setJiraWorkOrder(String jiraWorkOrder) {
+        this.jiraWorkOrder = jiraWorkOrder;
+    }
+
     public void setCustomer(String customer) {
         this.customer = customer;
     }
@@ -83,4 +119,5 @@ public class PbfSpare {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
 }

@@ -5,11 +5,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +19,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import ru.ssermakov.mystock.R;
 import ru.ssermakov.mystock.controllers.NcrStockController;
 import ru.ssermakov.mystock.data.room.entity.Spare;
@@ -137,7 +137,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             holder.location.setText(spare.getLocation().toUpperCase());
             holder.rework.setText(spare.getReturnCode().toUpperCase());
 
-            final boolean isExpanded = position== expandedPosition;
+            final boolean isExpanded = position == expandedPosition;
             if (isExpanded) {
                 holder.details.setVisibility(View.VISIBLE);
                 holder.useButton.setVisibility(View.VISIBLE);
@@ -217,7 +217,7 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
             ClipData data = ClipData.newPlainText("partnumber", holder.partNumber.getText().toString());
             clipboardManager.setPrimaryClip(data);
 
-            Toast.makeText(getApplicationContext(),"Text Copied : " + holder.partNumber.getText().toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Text Copied : " + holder.partNumber.getText().toString(), Toast.LENGTH_SHORT).show();
         }
 
         private void expandItem(int position, boolean isExpanded) {
@@ -253,8 +253,6 @@ public class NcrStockActivity extends AppCompatActivity implements NcrStockInter
                 this.useButton = itemView.findViewById(R.id.useButton);
                 this.editButton = itemView.findViewById(R.id.editEditDlgButton);
                 this.addButton = itemView.findViewById(R.id.addButton);
-
-
 
 
             }

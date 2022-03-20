@@ -1,6 +1,7 @@
 package ru.ssermakov.mystock.app;
 
 import android.app.Application;
+
 import androidx.room.Room;
 
 import androidx.room.migration.Migration;
@@ -17,8 +18,8 @@ public class App extends Application {
         super.onCreate();
         instance = this;
         db = Room.databaseBuilder(this, SparesDataBase.class, "spares")
-//                .fallbackToDestructiveMigration()
-                .addMigrations(MIGRATION_1_2)
+                .fallbackToDestructiveMigration()
+//                .addMigrations(MIGRATION_1_2/*, MIGRATION_2_3*/)
                 .build();
     }
 
@@ -36,6 +37,13 @@ public class App extends Application {
                     "PRIMARY KEY('id'))");
         }
     };
+//    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+//        @Override
+//        public void migrate(SupportSQLiteDatabase database) {
+//            database.execSQL("ALTER TABLE 'PbfSpares' ADD COLUMN 'connectionType' TEXT NOT NULL");
+////            database.execSQL("ALTER TABLE 'PbfSpares' ADD COLUMN 'jiraWorkOrder' TEXT NOT NULL DEFAULT ''");
+//        }
+//    };
 
     public static App getInstance() {
         return instance;

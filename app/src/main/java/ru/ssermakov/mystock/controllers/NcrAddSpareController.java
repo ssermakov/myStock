@@ -127,7 +127,7 @@ public class NcrAddSpareController {
         @Override
         protected void onPostExecute(ArrayList<Spare> spares) {
             super.onPostExecute(spares);
-            Toast.makeText(ncrAddSpareView, "List od spares created succesfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ncrAddSpareView, "List od spares created successfully", Toast.LENGTH_SHORT).show();
         }
 
 
