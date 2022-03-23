@@ -1,7 +1,5 @@
 package ru.ssermakov.mystock.views;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,6 +11,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -23,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import ru.ssermakov.mystock.R;
 import ru.ssermakov.mystock.controllers.PbfStockController;
 import ru.ssermakov.mystock.data.room.entity.PbfSpare;
-import ru.ssermakov.mystock.data.room.entity.Spare;
 import ru.ssermakov.mystock.views.interfaces.PbfStockInterface;
 
 public class PbfStockActivity extends AppCompatActivity implements PbfStockInterface {
@@ -53,7 +51,12 @@ public class PbfStockActivity extends AppCompatActivity implements PbfStockInter
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.pbf_stock_menu, menu);
+        if (!pbfStockController.getListOfSelectedItems().isEmpty()) {
+            getMenuInflater().inflate(R.menu.pbf_stock_delete_menu, menu);
+            pbfAdapter.notifyDataSetChanged();
+        } else {
+            getMenuInflater().inflate(R.menu.pbf_stock_menu, menu);
+        }
 
 //        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 //        searchView = (SearchView) menu.findItem(R.id.pbf_stock_find_menu).getActionView();
@@ -81,8 +84,18 @@ public class PbfStockActivity extends AppCompatActivity implements PbfStockInter
         if (item.getItemId() == R.id.pbf_stock_add_menu) {
             pbfStockController.onAddPbfSpareClick(this);
         }
-        if (item.getItemId() == R.id.ncr_stock_find_menu) {
-//            ncrStockController.onFindSpareClick(this);
+        if (item.getItemId() == R.id.pbf_stock_delete_menu_id) {
+
+            Collections.sort(pbfStockController.getListOfSelectedItems(), Collections.<Integer>reverseOrder());
+            for (int i = 0; i < pbfStockController.getListOfSelectedItems().size(); i++) {
+                int k = pbfStockController.getListOfSelectedItems().get(i);
+                PbfSpare pbfSpare = listOfPbfSpares.get(k);
+                pbfStockController.deleteCaseFromDb(pbfSpare);
+                listOfPbfSpares.remove(k);
+            }
+            pbfAdapter.notifyDataSetChanged();
+            invalidateOptionsMenu();
+            pbfStockController.getListOfSelectedItems().clear();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -126,7 +139,13 @@ public class PbfStockActivity extends AppCompatActivity implements PbfStockInter
         @NonNull
         @Override
         public CustomPbfViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new CustomPbfViewHolder(layoutInflater.inflate(R.layout.pbf_stock_recycler, parent, false));
+            if (viewType == 1) {
+                View v = layoutInflater.inflate(R.layout.pbf_stock_recycler_selected, parent, false);
+                return new CustomPbfViewHolder(v);
+            }
+            View v = layoutInflater.inflate(R.layout.pbf_stock_recycler, parent, false);
+            return new CustomPbfViewHolder(v);
+
         }
 
         @Override
@@ -162,9 +181,27 @@ public class PbfStockActivity extends AppCompatActivity implements PbfStockInter
                 previousExpandedPosition = position;
 
             holder.itemView.setOnClickListener(v -> {
-                expandItem(position, isExpanded);
-//                ncrStockController.copyPartNumberToClipBoard(holder.partNumber.getText().toString(), NcrStockActivity.this);
+                if (pbfStockController.getListOfSelectedItems().isEmpty()) {
+                    expandItem(position, isExpanded);
+                } else {
+                    if (pbfStockController.getListOfSelectedItems().contains(holder.getAdapterPosition())) {
+                        pbfStockController.removeItemFromSelected(holder.getAdapterPosition());
+                        notifyDataSetChanged();
+                        invalidateOptionsMenu();
+                    } else {
+                        pbfStockController.selectItem(holder.getAdapterPosition());
+                        notifyDataSetChanged();
+                    }
+                }
             });
+
+            holder.itemView.setOnLongClickListener(v -> {
+                pbfStockController.selectItem(holder.getAdapterPosition());
+                notifyDataSetChanged();
+                invalidateOptionsMenu();
+                return true;
+            });
+
 
         }
 
@@ -175,6 +212,16 @@ public class PbfStockActivity extends AppCompatActivity implements PbfStockInter
 
             notifyItemChanged(previousExpandedPosition);
             notifyItemChanged(position);
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            for (int i = 0; i < pbfStockController.getListOfSelectedItems().size(); i++) {
+                if (position == pbfStockController.getListOfSelectedItems().get(i)) {
+                    return 1;
+                }
+            }
+            return 0;
         }
 
         @Override
@@ -204,7 +251,7 @@ public class PbfStockActivity extends AppCompatActivity implements PbfStockInter
                 this.state = itemView.findViewById(R.id.pbfStateTextView);
                 this.quantity = itemView.findViewById(R.id.pbfQuantityTextView);
                 this.customer = itemView.findViewById(R.id.pbfCustomerTextView);
-                this.connectionType = itemView.findViewById(R.id.pbfConnectioTypeTextView);
+                this.connectionType = itemView.findViewById(R.id.pbfConnectionTypeTextView);
                 this.jiraWorkOrder = itemView.findViewById(R.id.pbfJiraWorkOrderTextView);
                 this.comment = itemView.findViewById(R.id.pbfCommentTextView);
 

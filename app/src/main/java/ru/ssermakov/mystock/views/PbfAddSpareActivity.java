@@ -7,7 +7,6 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import ru.ssermakov.mystock.R;
-import ru.ssermakov.mystock.controllers.NcrAddSpareController;
 import ru.ssermakov.mystock.controllers.PbfAddSpareController;
 import ru.ssermakov.mystock.data.room.entity.PbfSpare;
 
